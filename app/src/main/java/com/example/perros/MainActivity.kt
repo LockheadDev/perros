@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.perros.adapter.PerrosAdapter
 import com.example.perros.databinding.ActivityMainBinding
+import com.example.perros.patterns.RetrofitSingleton
 import com.example.perros.response.PerroResponse
 import com.example.perros.service.PerrosAPIService
 import kotlinx.coroutines.CoroutineScope
@@ -28,9 +29,6 @@ class MainActivity : AppCompatActivity(), android.widget.SearchView.OnQueryTextL
         initAdapter()
     }
 
-    private fun getRetroFit(): Retrofit{
-        return Retrofit.Builder().baseUrl("https://dog.ceo/api/breed/").addConverterFactory(GsonConverterFactory.create()).build() //Buscar perros por raza
-    }
     private fun initAdapter()
     {
         adapter = PerrosAdapter(perrosPics)
@@ -43,7 +41,7 @@ class MainActivity : AppCompatActivity(), android.widget.SearchView.OnQueryTextL
     {
         //El Courotine Scope es un bloque de tareas que se bloquea dependiendo de la información que se tenga
         CoroutineScope(Dispatchers.IO).launch { // Corutina de bloqueo por entrada y salida del dispositivo
-            val llamado = getRetroFit() // Regresa objeto response
+            val llamado = RetrofitSingleton.getRetroFit() // Regresa objeto response
                 .create(PerrosAPIService::class.java)
                 .getPerrosPorRaza("${raza}/images")
             val perrosResponse : PerroResponse? = llamado.body()
